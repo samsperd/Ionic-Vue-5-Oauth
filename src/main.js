@@ -3,7 +3,12 @@ import App from './App.vue'
 import router from './router';
 
 import { IonicVue } from '@ionic/vue';
+import axios from 'axios'
+import * as IonComponents from '@ionic/vue'
+// Above the createApp() line
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
+import { store } from './store';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 
@@ -22,11 +27,22 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+// Call the element loader after the platform has been bootstrapped
+defineCustomElements(window);
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api/';
 
 const app = createApp(App)
   .use(IonicVue)
-  .use(router);
-  
+  .use(router)
+  .use(store);
+
+Object.keys(IonComponents).forEach(key => {
+  if (/^Ion[A-Z]\w+$/.test(key)) {
+    app.component(key, IonComponents[key]);
+  }
+});
+
+
 router.isReady().then(() => {
   app.mount('#app');
 });

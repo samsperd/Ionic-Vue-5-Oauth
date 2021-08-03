@@ -2,13 +2,18 @@
   <div id="container">
     <strong>{{ name }}</strong>
     <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+      <ion-button href="/login" type="submit" shape="round">
+        Sign In
+        <slot>
+        </slot>
+      </ion-button>  </div>
 </template>
 
-<script lang="ts">
-
+<script>
+import {IonButton } from '@ionic/vue'
 export default {
   name: 'ExploreContainer',
+  components: {IonButton },
   props: {
     name: String
   }
