@@ -1,9 +1,4 @@
 import axios from 'axios';
-import { Drivers, Storage } from '@ionic/storage'
-const storage = new Storage({
-    name: '__mydb',
-    driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage]
-});
 
 export default{
     namespaced: true,
@@ -29,20 +24,27 @@ export default{
             return dispatch('attempt', response.data.token);
         },
         
-        async attempt({commit}, token) {
-            commit('SET_TOKEN', token);
+        async attempt({commit, state}, token) {
+            if(token) {
+                commit('SET_TOKEN', token);
+            }
+            if (!state.token) {
+                return
+            }
             try {
-                let response = await axios.get('auth/me',{
-                    headers: {
-                        'Authorization': 'Bearer '+ token
-                    }
-                });
+                let response = await axios.get('auth/me');
 
-                commit('SET_USER', (response.data));
+                commit('SET_USER', response.data);
             } catch (error) {
                 commit('SET_TOKEN', null);
                 commit('SET_USER', null);
             }
+        },
+        signOut({ commit }) {
+            return axios.post('auth/signout').then(() => {
+                commit('SET_TOKEN', null);
+                commit('SET_USER', null);
+            })
         }
     },
     

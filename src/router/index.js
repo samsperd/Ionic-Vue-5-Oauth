@@ -2,16 +2,31 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 // import { RouteRecordRaw } from 'vue-router';
 import Tabs from '../views/Tabs.vue'
 import signin from '../views/auth/login.vue'
+import { store } from '../store'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/tabs/tab1'
+    component: signin
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    redirect: '/tabs/tab1',
   },
   {
     path: '/tabs/',
     component: Tabs,
+    beforeEnter: (to, from, next) => {
+      if (!store.getters['auth/authenticated']) {
+        // console.log(store.getters['auth/authenticated']);
+        return next({
+          name: 'home'
+        })
+      }
+      next()
+    },
     children: [
       {
         path: '',
@@ -31,10 +46,6 @@ const routes = [
       }
     ]
   },
-  {
-    path: '/login',
-    component: signin
-  }
 ]
 
 const router = createRouter({

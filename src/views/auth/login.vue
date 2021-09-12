@@ -26,6 +26,10 @@
 
       </ion-card>
     </form>
+          <ion-button href="/dashboard" type="button" shape="round">
+        Dashboard
+      </ion-button>
+
         <registerd />
       </ion-content>
   </ion-page>
@@ -53,7 +57,7 @@ export default {
         handleLogin() {
             this.signIn(this.form).then(() => {
               this.$router.replace({
-                name: 'home'
+                name: 'dashboard'
               })
             }).catch((e) => {
               console.log('failed');

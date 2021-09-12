@@ -1,22 +1,48 @@
 <template>
   <div id="container">
-    <strong>{{ name }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      <ion-button href="/login" type="submit" shape="round">
+      <div v-if="authenticated">
+        <h3>My name is <strong>{{user.name}}</strong></h3>
+        <h3>My email is <strong>{{user.email}}</strong></h3>
+      </div>
+
+    <p><strong>{{ name }}</strong></p>
+    <!-- <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p> -->
+      <ion-button href="/" type="submit" shape="round">
         Sign In
-        <slot>
-        </slot>
-      </ion-button>  </div>
+      </ion-button>
+      <ion-button href="#" @click.prevent="signOut" type="submit" shape="round">
+        Sign Out
+      </ion-button>
+      </div>
 </template>
 
 <script>
 import {IonButton } from '@ionic/vue'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'ExploreContainer',
   components: {IonButton },
   props: {
     name: String
-  }
+  },
+  computed: {
+    ...mapGetters({
+      authenticated: 'auth/authenticated',
+      user: 'auth/user'
+    }),
+  },
+  methods: {
+    ...mapActions({
+      signOutAction: 'auth/signOut'
+    }),
+    signOut() {
+      this.signOutAction().then(() => {
+        this.$router.replace({
+          name: 'home'
+        })
+      })
+    }
+  },
 }
 </script>
 
