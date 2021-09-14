@@ -2,13 +2,31 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 // import { RouteRecordRaw } from 'vue-router';
 import Tabs from '../views/Tabs.vue'
 import signin from '../views/auth/login.vue'
-import { store } from '../store'
+import { store }  from '../store'
+
+async function redirectIfNotAuth(to, from, next) {
+  await store.dispatch('auth/attempt', localStorage.getItem('token'));
+  if (store.getters['auth/check'] === false) {
+    next({ name: 'home'})
+  } else {
+    next();
+  }
+}
+async function guest(to, from, next) {
+  await store.dispatch('auth/attempt', localStorage.getItem('token'));
+  if (store.getters['auth/check'] === true) {
+    return router.go(-1);
+  } else {
+    next();
+  }
+}
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: signin
+    component: signin,
+    beforeEnter: guest
   },
   {
     path: '/dashboard',
@@ -18,15 +36,7 @@ const routes = [
   {
     path: '/tabs/',
     component: Tabs,
-    beforeEnter: (to, from, next) => {
-      if (!store.getters['auth/authenticated']) {
-        // console.log(store.getters['auth/authenticated']);
-        return next({
-          name: 'home'
-        })
-      }
-      next()
-    },
+    beforeEnter: redirectIfNotAuth,
     children: [
       {
         path: '',

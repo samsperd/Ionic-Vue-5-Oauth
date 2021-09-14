@@ -3,7 +3,7 @@ import axios from 'axios';
 export default{
     namespaced: true,
     state: {
-        token: null,
+        token: localStorage.getItem('token'),
         user: null
     },
     
@@ -13,7 +13,8 @@ export default{
         },
         user (state) {
             return state.user;
-        }
+        },
+        check: state => state.user !== null
     },
     
     actions: {
@@ -45,7 +46,7 @@ export default{
                 commit('SET_TOKEN', null);
                 commit('SET_USER', null);
             })
-        }
+        },
     },
     
     mutations: {
